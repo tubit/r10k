@@ -4,8 +4,9 @@ require 'r10k/util/purgeable'
 require 'r10k/util/path'
 
 module R10K
+
+# Provide the structure for Puppetfile data.
 class Puppetfile
-  # Defines the data members of a Puppetfile
 
   include R10K::Logging
 
@@ -18,19 +19,26 @@ class Puppetfile
   attr_reader :modules
 
   # @!attribute [r] basedir
-  #   @return [String] The base directory that contains the Puppetfile
+  #   @return [String] The directory that contains the Puppetfile
   attr_reader :basedir
 
   # @!attribute [r] moduledir
-  #   @return [String] The directory to install the modules #{basedir}/modules
+  #   @return [String] The default directory to install the modules into.
+  #     Defaults to `#{basedir}/modules`
   attr_reader :moduledir
 
   # @!attrbute [r] puppetfile_path
   #   @return [String] The path to the Puppetfile
   attr_reader :puppetfile_path
 
-  # @param [String] basedir
-  # @param [String] puppetfile The path to the Puppetfile, default to #{basedir}/Puppetfile
+  # Generate a new Puppetfile instance.
+  #
+  # @param [String] basedir The directory that contains the default locations
+  #   of the Puppetfile and moduledir
+  # @return [String] moduledir The default directory to install the modules into.
+  #   Defaults to `#{basedir}/modules`
+  # @param [String] puppetfile The path to the Puppetfile. Defaults to
+  #   `#{basedir}/Puppetfile`
   def initialize(basedir, moduledir = nil, puppetfile = nil)
     @basedir         = basedir
     @moduledir       = moduledir  || File.join(basedir, 'modules')
@@ -92,10 +100,10 @@ class Puppetfile
     File.read(@puppetfile_path)
   end
 
+  # A barebones implementation of the Puppetfile DSL
+  #
+  # @api private
   class DSL
-    # A barebones implementation of the Puppetfile DSL
-    #
-    # @api private
 
     def initialize(librarian)
       @librarian = librarian
