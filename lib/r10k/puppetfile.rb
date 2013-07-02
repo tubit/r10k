@@ -78,7 +78,20 @@ class Puppetfile
   # @param [String] name
   # @param [*Object] args
   def add_module(name, args)
-    @modules << R10K::Module.new(name, @basedir, @moduledir, args)
+
+    require 'pp'
+    pp args
+    if (dir = args[:moduledir])
+      if R10K::Util::Path.is_absolute?(dir)
+        raise ArgumentError, ":moduledir specified on #{name} must be a relative path"
+      else
+        args[:moduledir] = File.join(@basedir, dir)
+      end
+    else
+      args[:moduledir] = @moduledir
+    end
+
+    @modules << R10K::Module.new(name, @basedir, args)
   end
 
   include R10K::Util::Purgeable
@@ -109,7 +122,7 @@ class Puppetfile
       @librarian = librarian
     end
 
-    def mod(name, args = [])
+    def mod(name, args = {})
       @librarian.add_module(name, args)
     end
 

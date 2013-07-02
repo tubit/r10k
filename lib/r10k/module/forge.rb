@@ -22,9 +22,9 @@ class Forge
 
   attr_accessor :owner, :full_name
 
-  def initialize(name, moduledir, args)
+  def initialize(name, basedir, args)
     @full_name = name
-    @moduledir   = moduledir
+    @basedir   = basedir
 
     @owner, @name = name.split('/')
 
@@ -47,7 +47,7 @@ class Forge
       cmd << @full_name
       pmt cmd
     else
-      FileUtils.mkdir @moduledir unless File.directory? @moduledir
+      FileUtils.mkdir @basedir unless File.directory? @basedir
       #logger.debug "Module #{@full_name} is not installed"
       cmd = []
       cmd << 'install'
@@ -82,8 +82,8 @@ class Forge
   private
 
   def pmt(args)
-    cmd = "puppet module --modulepath '#{@moduledir}' #{args.join(' ')}"
-    log_event = "puppet module #{args.join(' ')}, modulepath: #{@moduledir.inspect}"
+    cmd = "puppet module --modulepath '#{@basedir}' #{args.join(' ')}"
+    log_event = "puppet module #{args.join(' ')}, modulepath: #{@basedir.inspect}"
     logger.debug1 "Execute: #{cmd}"
 
     status, stdout, stderr = systemu(cmd)
